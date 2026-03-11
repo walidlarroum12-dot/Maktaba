@@ -3,6 +3,8 @@ package com.ElOuedUniv.maktaba.presentation.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,7 +22,8 @@ import com.ElOuedUniv.maktaba.presentation.viewmodel.BookViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookListScreen(
-    viewModel: BookViewModel
+    viewModel: BookViewModel,
+    onCategoriesClick: () -> Unit
 ) {
     val books by viewModel.books.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -33,7 +36,15 @@ fun BookListScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                ),
+                actions = {
+                    IconButton(onClick = onCategoriesClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.List,
+                            contentDescription = "Categories"
+                        )
+                    }
+                }
             )
         }
     ) { paddingValues ->
