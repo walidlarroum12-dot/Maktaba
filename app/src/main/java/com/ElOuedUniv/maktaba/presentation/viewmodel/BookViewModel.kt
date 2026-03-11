@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.ElOuedUniv.maktaba.data.model.Book
 import com.ElOuedUniv.maktaba.domain.usecase.GetBooksUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -27,6 +30,14 @@ class BookViewModel(
     // Loading state
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    /**
+     * Bonus 2: Total number of pages across all books
+     * Automatically recalculated when the books list changes
+     */
+    val totalPages: StateFlow<Int> = _books
+        .map { bookList -> bookList.sumOf { it.nbPages } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     init {
         // Load books when ViewModel is created
@@ -56,3 +67,4 @@ class BookViewModel(
         loadBooks()
     }
 }
+

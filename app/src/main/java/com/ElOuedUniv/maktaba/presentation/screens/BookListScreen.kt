@@ -24,6 +24,7 @@ fun BookListScreen(
 ) {
     val books by viewModel.books.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val totalPages by viewModel.totalPages.collectAsState()
 
     Scaffold(
         topBar = {
@@ -53,6 +54,7 @@ fun BookListScreen(
                 } else {
                     BookList(
                         books = books,
+                        totalPages = totalPages,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -62,11 +64,12 @@ fun BookListScreen(
 }
 
 /**
- * Composable for displaying a list of books
+ * Composable for displaying a list of books with a stats header
  */
 @Composable
 fun BookList(
     books: List<Book>,
+    totalPages: Int,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -74,6 +77,50 @@ fun BookList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Bonus 1 & 2: Stats summary at the top
+        item {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "📚",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Total Books: ${books.size}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "📄",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Total Pages: $totalPages",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                }
+            }
+        }
+
+        // Book items
         items(books) { book ->
             BookItem(book = book)
         }
