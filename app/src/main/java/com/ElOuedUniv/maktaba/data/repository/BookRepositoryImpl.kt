@@ -1,6 +1,10 @@
 package com.ElOuedUniv.maktaba.data.repository
 
 import com.ElOuedUniv.maktaba.data.model.Book
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 
 /**
  * Implementation of BookRepository
@@ -8,14 +12,17 @@ import com.ElOuedUniv.maktaba.data.model.Book
  *
  * This class implements the BookRepository interface,
  * following the Repository Pattern to abstract the data source.
+ *
+ * Uses MutableSharedFlow to notify observers when the book list changes
+ * (e.g., after a new book is added).
  */
 class BookRepositoryImpl : BookRepository {
 
     /**
-     * In-memory list of books
+     * In-memory mutable list of books
      * In a real app, this data would come from a database or API
      */
-    private val booksList = listOf(
+    private val booksList = mutableListOf(
         // --- Original 5 books (Exercise 1) ---
         Book(isbn = "978-0-13-235088-4", title = "Clean Code", nbPages = 464),
         Book(isbn = "978-0-13-595705-9", title = "The Pragmatic Programmer", nbPages = 352),
@@ -32,11 +39,38 @@ class BookRepositoryImpl : BookRepository {
     )
 
     /**
-     * Get all books from the repository
+     * SharedFlow used to signal that the book list has changed.
+     * When a book is added, we emit the updated list through this flow.
+     */
+    private val _booksFlow = MutableSharedFlow<List<Book>>(replay = 1)
+
+    /**
+     * Get all books from the repository (synchronous)
      * @return List of all books
      */
     override fun getAllBooks(): List<Book> {
-        return booksList
+        return booksList.toList()
+    }
+
+    /**
+     * Observe the list of books reactively.
+     * Starts by emitting the current list, then emits updates whenever a book is added.
+     * @return Flow of the book list
+     */
+    override fun getBooks(): Flow<List<Book>> {
+        return _booksFlow.onStart { emit(booksList.toList()) }
+    }
+
+    /**
+     * Add a new book to the repository.
+     * After adding, emits the updated list through the SharedFlow
+     * so that all observers (e.g., ViewModel) are notified.
+     *
+     * @param book The book to add
+     */
+    override suspend fun addBook(book: Book) {
+        booksList.add(book)
+        _booksFlow.emit(booksList.toList())
     }
 
     /**

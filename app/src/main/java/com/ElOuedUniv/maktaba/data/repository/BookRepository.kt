@@ -1,6 +1,7 @@
 package com.ElOuedUniv.maktaba.data.repository
 
 import com.ElOuedUniv.maktaba.data.model.Book
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Repository interface for managing book data
@@ -19,6 +20,19 @@ interface BookRepository {
      * @return List of all books
      */
     fun getAllBooks(): List<Book>
+
+    /**
+     * Observe the list of books reactively via Flow
+     * Emits a new list whenever the data changes (e.g., after addBook)
+     * @return Flow of the book list
+     */
+    fun getBooks(): Flow<List<Book>>
+
+    /**
+     * Add a new book to the repository
+     * @param book The book to add
+     */
+    suspend fun addBook(book: Book)
 
     /**
      * Get a book by ISBN

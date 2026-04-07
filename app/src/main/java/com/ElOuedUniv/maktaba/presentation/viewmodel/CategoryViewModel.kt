@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ElOuedUniv.maktaba.data.model.Category
 import com.ElOuedUniv.maktaba.domain.usecase.GetCategoriesUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -11,15 +12,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * ViewModel for managing category-related UI state
  * This follows the MVVM pattern where ViewModel acts as a bridge between
  * the UI and the business logic (Use Cases)
  *
- * @param getCategoriesUseCase Use case for retrieving categories
+ * @HiltViewModel tells Hilt that this ViewModel should be injectable.
+ * @Inject constructor tells Hilt HOW to create this ViewModel by
+ * automatically providing the required Use Cases from DomainModule.
+ *
+ * @param getCategoriesUseCase Use case for retrieving categories (injected by Hilt)
  */
-class CategoryViewModel(
+@HiltViewModel
+class CategoryViewModel @Inject constructor(
     private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
 

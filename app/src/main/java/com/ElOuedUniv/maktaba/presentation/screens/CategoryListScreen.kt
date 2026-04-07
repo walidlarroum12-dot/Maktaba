@@ -15,16 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ElOuedUniv.maktaba.data.model.Category
 import com.ElOuedUniv.maktaba.presentation.viewmodel.CategoryViewModel
 
 /**
  * Screen displaying the list of book categories
+ * The viewModel is provided by Hilt via hiltViewModel() automatically.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryListScreen(
-    viewModel: CategoryViewModel,
+    viewModel: CategoryViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState()
